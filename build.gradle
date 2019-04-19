@@ -1,0 +1,42 @@
+plugins {
+    id 'java'
+}
+
+apply plugin: 'idea'
+apply plugin: 'application'
+
+group 'com.impl'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 11
+targetCompatibility = 11
+
+repositories {
+    mavenCentral()
+}
+
+task fatJar(type: Jar) {
+
+    manifest {
+        attributes 'Implementation-Title': 'sparkjava-playground',
+                'Implementation-Version': version,
+                'Main-Class': 'com.impl.demo.Demo'
+    }
+
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+task startServer(type: JavaExec){
+    main = "com.impl.demo.Demo"
+    description = "Start server"
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    compile 'com.sparkjava:spark-core:2.9.0'
+    compile 'ch.qos.logback:logback-classic:1.2.3'
+}
